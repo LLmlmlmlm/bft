@@ -18,18 +18,27 @@
     .active {
       display: block;
     }
-    /* Home selection page */
+
+    /* HOME PAGE */
     #homePage {
+      text-align: center;
+      padding-top: 40px;
+    }
+    #homePage img {
+      width: 350px;
+      margin: 40px auto 30px;
+      display: block;
+    }
+    .appOptions {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
       align-items: center;
-      height: 100vh;
-      gap: 40px;
+      justify-content: center;
     }
     .appOption {
-      flex: 1;
-      max-width: 300px;
-      height: 200px;
+      width: 300px;
+      height: 120px;
       background: white;
       border: 3px solid black;
       border-radius: 12px;
@@ -41,13 +50,13 @@
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
-      text-align: center;
-      padding: 20px;
     }
     .appOption:hover {
       transform: scale(1.05);
       background: #f0f0f0;
     }
+
+    /* INVOICE APP */
     #startPage img {
       width: 350px;
       display: block;
@@ -83,8 +92,11 @@
 
 <!-- HOME PAGE -->
 <div id="homePage" class="page active">
-  <div class="appOption" onclick="showPage('startPage')">Invoice App</div>
-  <div class="appOption" onclick="showPage('otherAppPage')">Other App</div>
+  <img src="images/bftlogofull.png" alt="Logo">
+  <div class="appOptions">
+    <div class="appOption" onclick="showPage('startPage')">Invoice App</div>
+    <div class="appOption" onclick="showPage('otherAppPage')">Other App</div>
+  </div>
 </div>
 
 <!-- INVOICE APP START PAGE -->
@@ -256,7 +268,7 @@
       E-transfer to kenogamissi@yahoo.com</p>
       <p style="text-align: center;">
         <a href="http://www.borealforestteas.ca">www.borealforestteas.ca</a><br>
-        426 Norah St. S. Thunder Bay | hello@borealforestteas@gmail.ca | 807-631-4422<br>
+        426 Norah St. S. Thunder Bay | hello@borealforestteas.ca | 807-631-4422<br>
         Ontario, Canada, P7E 1N9
       </p>`;
     document.getElementById('invoiceView').innerHTML = html;
