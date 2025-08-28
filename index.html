@@ -95,16 +95,18 @@
     <label for="invoiceId">Enter Invoice ID:</label>
     <input type="text" id="invoiceId" placeholder="e.g. BFT2025-01"><br>
     <label for="storeName">Enter Store Name:</label>
-    <input type="text" id="storeName" placeholder="e.g. Boreal Co-op"><br>
+    <input type="text" id="storeName" placeholder="e.g. Enter Here"><br>
     <label for="invoiceDate">Date:</label>
     <input type="date" id="invoiceDate"><br>
     <button onclick="goToTable()">Go</button>
+    <button onclick="showPage('homePage')">Home</button>
   </div>
 </div>
 
 <!-- INVOICE TABLE PAGE -->
 <div id="tablePage" class="page">
   <h2>Invoice Table</h2>
+  <button onclick="showPage('homePage')">Home</button>
   <button onclick="addRow()">Add Row</button>
   <button onclick="generateInvoice()">Done</button>
   <table id="invoiceTable">
@@ -124,10 +126,11 @@
 <!-- FINAL INVOICE VIEW PAGE -->
 <div id="invoicePage" class="page">
   <div style="text-align:right;margin-bottom:10px;">
+    <button onclick="showPage('homePage')">Home</button>
     <button onclick="updateInventoryFromInvoice()">Update Inventory</button>
+    <button onclick="reset()">Done</button>
   </div>
   <div id="invoiceView"></div>
-  <button onclick="reset()">Done</button>
 </div>
 
 <!-- INVENTORY PAGE -->
