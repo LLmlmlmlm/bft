@@ -142,28 +142,68 @@
 
 <script>
 // ---------------- Inventory Setup ----------------
-let inventory = JSON.parse(localStorage.getItem("inventory")) || {
+// let inventory = JSON.parse(localStorage.getItem("inventory")) || {
+//  labels: [
+//    {name: "Regular Label", qty: 20},
+//    {name: "Sample Label", qty: 20}
+//  ],
+//  tea: [
+//    {name: "Boreal Berry", qty: 20},
+//    {name: "Loon Song", qty: 20},
+//    {name: "Northern Lights", qty: 20},
+//    {name: "40° Below", qty: 20},
+//    {name: "Evergreen", qty: 20},
+//    {name: "Happy Camper", qty: 20},
+//    {name: "Canadian Shield", qty: 20},
+//    {name: "Cranberry Mint", qty: 20},
+//    {name: "Sleeping Giant", qty: 20},
+//    {name: "Stargazer", qty: 20},
+//    {name: "Licorice Spice", qty: 20},
+//    {name: "Holiday Tea", qty: 20},
+//    {name: "Pukaskwa", qty: 20},
+//    {name: "Kakabeka Falls", qty: 20}
+//  ]
+//};
+
+  let inventory = JSON.parse(localStorage.getItem("inventory")) || {
   labels: [
-    {name: "Regular Label", qty: 20},
-    {name: "Sample Label", qty: 20}
+    {name: "Regular Label - Small", qty: 20},
+    {name: "Regular Label - Large", qty: 20},
+    {name: "Sample Label - Small", qty: 20},
+    {name: "Sample Label - Large", qty: 20}
   ],
   tea: [
-    {name: "Boreal Berry", qty: 20},
-    {name: "Loon Song", qty: 20},
-    {name: "Northern Lights", qty: 20},
-    {name: "40° Below", qty: 20},
-    {name: "Evergreen", qty: 20},
-    {name: "Happy Camper", qty: 20},
-    {name: "Canadian Shield", qty: 20},
-    {name: "Cranberry Mint", qty: 20},
-    {name: "Sleeping Giant", qty: 20},
-    {name: "Stargazer", qty: 20},
-    {name: "Licorice Spice", qty: 20},
-    {name: "Holiday Tea", qty: 20},
-    {name: "Pukaskwa", qty: 20},
-    {name: "Kakabeka Falls", qty: 20}
+    {name: "Boreal Berry - Small Bag", qty: 20},
+    {name: "Boreal Berry - Large Bag", qty: 20},
+    {name: "Loon Song - Small Bag", qty: 20},
+    {name: "Loon Song - Large Bag", qty: 20},
+    {name: "Northern Lights - Small Bag", qty: 20},
+    {name: "Northern Lights - Large Bag", qty: 20},
+    {name: "40° Below - Small Bag", qty: 20},
+    {name: "40° Below - Large Bag", qty: 20},
+    {name: "Evergreen - Small Bag", qty: 20},
+    {name: "Evergreen - Large Bag", qty: 20},
+    {name: "Happy Camper - Small Bag", qty: 20},
+    {name: "Happy Camper - Large Bag", qty: 20},
+    {name: "Canadian Shield - Small Bag", qty: 20},
+    {name: "Canadian Shield - Large Bag", qty: 20},
+    {name: "Cranberry Mint - Small Bag", qty: 20},
+    {name: "Cranberry Mint - Large Bag", qty: 20},
+    {name: "Sleeping Giant - Small Bag", qty: 20},
+    {name: "Sleeping Giant - Large Bag", qty: 20},
+    {name: "Stargazer - Small Bag", qty: 20},
+    {name: "Stargazer - Large Bag", qty: 20},
+    {name: "Licorice Spice - Small Bag", qty: 20},
+    {name: "Licorice Spice - Large Bag", qty: 20},
+    {name: "Holiday Tea - Small Bag", qty: 20},
+    {name: "Holiday Tea - Large Bag", qty: 20},
+    {name: "Pukaskwa - Small Bag", qty: 20},
+    {name: "Pukaskwa - Large Bag", qty: 20},
+    {name: "Kakabeka Falls - Small Bag", qty: 20},
+    {name: "Kakabeka Falls - Large Bag", qty: 20}
   ]
 };
+
 
 // ---------------- Page Navigation ----------------
 function showPage(id) {
@@ -173,20 +213,35 @@ function showPage(id) {
 }
 
 // ---------------- Show Inventory ----------------
-function renderInventory() {
+//  function renderInventory() {
+//  let listDiv = document.getElementById('inventoryList');
+//  let html = `<h3>Tea Blends</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
+//  inventory.tea.forEach(i=> {
+//    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+//  });
+//  html += `</table>`;
+//  html += `<h3>Labels</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
+//  inventory.labels.forEach(i=> {
+//    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+//  });
+//  html += `</table>`;
+//  listDiv.innerHTML = html;
+//}
+
+  function renderInventory() {
   let listDiv = document.getElementById('inventoryList');
-  let html = `<h3>Tea Blends</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
-  inventory.tea.forEach(i=> {
-    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
-  });
-  html += `</table>`;
-  html += `<h3>Labels</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
-  inventory.labels.forEach(i=> {
-    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
-  });
-  html += `</table>`;
+  let html = '';
+  for (let category in inventory) {
+    html += `<h3>${category.charAt(0).toUpperCase() + category.slice(1)}</h3>`;
+    html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
+    inventory[category].forEach(i => {
+      html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+    });
+    html += `</table>`;
+  }
   listDiv.innerHTML = html;
 }
+
 
 // ---------------- Update Inventory ----------------
 function updateInventory(itemName, qtyUsed) {
