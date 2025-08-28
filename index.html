@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Invoice Table App</title>
+  <title>Company Apps</title>
   <style>
     body {
       font-family: 'Times New Roman', serif;
@@ -11,17 +11,22 @@
       margin: 0;
       padding: 0;
     }
-    .page { display: none; padding: 20px; }
-    .active { display: block; }
-    #startPage img {
+    .page {
+      display: none;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
+    img {
       width: 350px;
       display: block;
-      margin: 40px auto 20px;
+      margin: 40px auto;
     }
     input, select, button {
       font-family: 'Times New Roman';
-      font-size: 16px;
-      padding: 5px;
+      font-size: 18px;
+      padding: 6px;
       margin: 10px;
     }
     table {
@@ -32,23 +37,59 @@
     }
     th, td {
       border: 1px solid black;
-      padding: 8px;
+      padding: 10px;
       text-align: center;
+      font-size: 18px;
     }
-    th { background-color: #f2f2f2; }
+    th {
+      background-color: #f2f2f2;
+    }
     #invoiceView {
       background: white;
       padding: 20px;
     }
-    /* Hide update inventory button in print */
-    @media print {
-      #updateInventoryBtn { display: none; }
+    .appOptions, .inventoryOptions {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    .appOption, .inventoryOption {
+      width: 300px;
+      height: 120px;
+      background: white;
+      border: 3px solid black;
+      border-radius: 12px;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      text-align: center;
+    }
+    .appOption:hover, .inventoryOption:hover {
+      transform: scale(1.05);
+      background: #f0f0f0;
     }
   </style>
 </head>
 <body>
 
-<div id="startPage" class="page active">
+<!-- HOME MENU -->
+<div id="homePage" class="page active">
+  <img src="images/bftlogofull.png" alt="Logo">
+  <div class="appOptions">
+    <div class="appOption" onclick="showPage('startPage')">Invoice App</div>
+    <div class="appOption" onclick="showPage('inventoryPage')">Inventory App</div>
+  </div>
+</div>
+
+<!-- INVOICE START PAGE -->
+<div id="startPage" class="page">
   <img src="images/bftlogofull.png" alt="Logo">
   <div style="text-align: center;">
     <label for="invoiceId">Enter Invoice ID:</label>
@@ -61,6 +102,7 @@
   </div>
 </div>
 
+<!-- INVOICE TABLE PAGE -->
 <div id="tablePage" class="page">
   <h2>Invoice Table</h2>
   <button onclick="addRow()">Add Row</button>
@@ -79,203 +121,207 @@
   </table>
 </div>
 
+<!-- FINAL INVOICE VIEW PAGE -->
 <div id="invoicePage" class="page">
-  <!-- New Update Inventory button -->
-  <button id="updateInventoryBtn" onclick="applyInventoryUpdate()">Update Inventory</button>
+  <div style="text-align:right;margin-bottom:10px;">
+    <button onclick="updateInventoryFromInvoice()">Update Inventory</button>
+  </div>
   <div id="invoiceView"></div>
   <button onclick="reset()">Done</button>
 </div>
 
+<!-- INVENTORY PAGE -->
+<div id="inventoryPage" class="page">
+  <h2>Inventory</h2>
+  <div id="inventoryList"></div>
+  <button onclick="showPage('homePage')">Back</button>
+</div>
+
 <script>
-  // ---------------- Invoice Variables ----------------
-  let enteredId = '';
-  let enteredStore = '';
-  let enteredDate = '';
-  const itemOptions = ['BFT-Large Bag', 'BFT-Small Bag', 'Other Product'];
-  const descriptions = [
-    'Boreal Berry','Loon Song','Northern Lights','40° Below','Evergreen',
-    'Happy Camper','Canadian Shield','Cranberry Mint','Sleeping Giant',
-    'Stargazer','Licorice Spice','Holiday Tea','Pukaskwa','Kakabeka Falls'
-  ];
+// ---------------- Inventory Setup ----------------
+let inventory = JSON.parse(localStorage.getItem("inventory")) || {
+  labels: [
+    {name: "Round Label", qty: 500},
+    {name: "Square Label", qty: 300}
+  ],
+  tea: [
+    {name: "Boreal Berry", qty: 100},
+    {name: "Loon Song", qty: 120},
+    {name: "Northern Lights", qty: 80},
+    {name: "40° Below", qty: 90},
+    {name: "Evergreen", qty: 100},
+    {name: "Happy Camper", qty: 70},
+    {name: "Canadian Shield", qty: 95},
+    {name: "Cranberry Mint", qty: 110},
+    {name: "Sleeping Giant", qty: 85},
+    {name: "Stargazer", qty: 100},
+    {name: "Licorice Spice", qty: 60},
+    {name: "Holiday Tea", qty: 50},
+    {name: "Pukaskwa", qty: 75},
+    {name: "Kakabeka Falls", qty: 65}
+  ]
+};
 
-  // ---------------- Inventory Setup ----------------
-  let inventory = JSON.parse(localStorage.getItem("inventory")) || {
-    labels: [
-      {name: "Round Label", qty: 500},
-      {name: "Square Label", qty: 300}
-    ],
-    tea: [
-      {name: "Boreal Berry", qty: 100},
-      {name: "Loon Song", qty: 120}
-    ],
-    other: [
-      {name: "Boxes", qty: 200},
-      {name: "Tape Rolls", qty: 20}
-    ]
-  };
+// ---------------- Page Navigation ----------------
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'inventoryPage') renderInventory();
+}
 
-  // ---------------- Navigation ----------------
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-  }
+// ---------------- Show Inventory ----------------
+function renderInventory() {
+  let listDiv = document.getElementById('inventoryList');
+  let html = `<h3>Tea Blends</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
+  inventory.tea.forEach(i=> {
+    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+  });
+  html += `</table>`;
+  html += `<h3>Labels</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
+  inventory.labels.forEach(i=> {
+    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+  });
+  html += `</table>`;
+  listDiv.innerHTML = html;
+}
 
-  function goToTable() {
-    const idInput = document.getElementById('invoiceId');
-    const storeInput = document.getElementById('storeName');
-    const dateInput = document.getElementById('invoiceDate');
-    if (idInput.value.trim() === '' || storeInput.value.trim() === '') {
-      alert('Please enter a valid Invoice ID and Store Name.');
-      return;
-    }
-    enteredId = idInput.value.trim();
-    enteredStore = storeInput.value.trim();
-    enteredDate = dateInput.value || new Date().toISOString().split('T')[0];
-    showPage('tablePage');
-    addRow();
-  }
-
-  // ---------------- Invoice Table ----------------
-  function addRow() {
-    const tbody = document.getElementById('invoiceBody');
-    const row = document.createElement('tr');
-    const itemSelect = `<select onchange="updatePrice(this)">${itemOptions.map(opt => `<option>${opt}</option>`).join('')}</select>`;
-    const descSelect = `<select>${descriptions.map(desc => `<option>${desc}</option>`).join('')}</select>`;
-    row.innerHTML = `
-      <td>${itemSelect}</td>
-      <td>${descSelect}</td>
-      <td class="unitPrice">14.00</td>
-      <td><input type="number" value="1" min="0" onchange="updateTotal(this)"></td>
-      <td class="total">14.00</td>`;
-    tbody.appendChild(row);
-  }
-
-  function updatePrice(selectEl) {
-    const row = selectEl.closest('tr');
-    let price = 0;
-    switch (selectEl.value) {
-      case 'BFT-Large Bag': price = 14.00; break;
-      case 'BFT-Small Bag': price = 8.50; break;
-      case 'Other Product': price = 30.00; break;
-    }
-    row.querySelector('.unitPrice').innerText = price.toFixed(2);
-    const qty = parseInt(row.querySelector('input').value) || 0;
-    row.querySelector('.total').innerText = (qty * price).toFixed(2);
-  }
-
-  function updateTotal(inputEl) {
-    const row = inputEl.closest('tr');
-    const price = parseFloat(row.querySelector('.unitPrice').innerText);
-    const qty = parseInt(inputEl.value);
-    if (qty === 0) row.remove();
-    else row.querySelector('.total').innerText = (price * qty).toFixed(2);
-  }
-
-  // ---------------- Generate Invoice ----------------
-  function generateInvoice() {
-    const rows = document.querySelectorAll('#invoiceBody tr');
-    let totalSum = 0;
-    let totalQuantity = 0;
-
-    let html = `
-    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-      <div><img src="images/bftlogofull.png" alt="Logo" style="width: 200px;"></div>
-      <div style="text-align: right;">
-        <h3>INVOICE #: ${enteredId}</h3>
-        <b>DATE:</b> ${enteredDate}<br>
-        <b>PO:</b> <input id="poField" style="border:1px solid #000;padding:4px;margin-top:5px;width:200px;">
-      </div>
-    </div>
-    <p><b>To:</b> ${enteredStore}</p>
-    <table>
-      <thead>
-        <tr><th>Item</th><th>Description</th><th>Unit Price</th><th>Quantity</th><th>Amount</th></tr>
-      </thead>
-      <tbody>`;
-
-    rows.forEach(row => {
-      const item = row.querySelector('select').value;
-      const desc = row.querySelectorAll('select')[1].value;
-      const price = parseFloat(row.querySelector('.unitPrice').innerText);
-      const qty = parseInt(row.querySelector('input').value);
-      const total = price * qty;
-      totalQuantity += qty;
-      totalSum += total;
-      html += `<tr><td>${item}</td><td>${desc}</td><td>$${price.toFixed(2)}</td><td>${qty}</td><td>$${total.toFixed(2)}</td></tr>`;
-    });
-
-    html += `<tr>
-      <td colspan="3" style="text-align:right;"><b>Totals:</b></td>
-      <td><b>${totalQuantity}</b></td>
-      <td><b>$${totalSum.toFixed(2)}</b></td>
-    </tr></tbody></table>
-
-    <div style="margin-top: 20px;">
-      <textarea id="notesField"
-        style="width:100%;height:100px;border:1px solid #000;padding:8px;font-family:'Times New Roman';font-size:16px;"
-        oninput="lockPrefix(this, 'Notes: ')">Notes: </textarea>
-    </div>
-    <p style="margin-top:10px;">Thank you!<br>Lee-Ann</p>
-    <p><b>Method of Payment (cash/cheque/e-transfer): ______________________</b><br>
-    <i>Please make cheques payable to Boreal Forest Teas.</i><br>
-    E-transfer to kenogamissi@yahoo.com</p>
-    <p style="text-align: center;">
-      <a href="http://www.borealforestteas.ca">www.borealforestteas.ca</a><br>
-      426 Norah St. S. Thunder Bay | hello@borealforestteas@gmail.ca | 807-631-4422<br>
-      Ontario, Canada, P7E 1N9
-    </p>`;
-
-    document.getElementById('invoiceView').innerHTML = html;
-    showPage('invoicePage');
-  }
-
-  // ---------------- Inventory Update ----------------
-  function applyInventoryUpdate() {
-    const rows = document.querySelectorAll('#invoiceView table tbody tr');
-    rows.forEach(row => {
-      const cells = row.querySelectorAll('td');
-      if (cells.length === 5) { // skip totals row
-        const desc = cells[1].innerText;
-        const qty = parseInt(cells[3].innerText);
-        updateInventory(desc, qty);
+// ---------------- Update Inventory ----------------
+function updateInventory(itemName, qtyUsed) {
+  ['labels','tea'].forEach(cat => {
+    inventory[cat].forEach(item=>{
+      if(item.name === itemName) {
+        item.qty -= qtyUsed;
+        if(item.qty<0) item.qty=0;
       }
     });
-    alert("Inventory updated successfully!");
-  }
+  });
+}
 
-  function updateInventory(itemName, qtyUsed) {
-    ['labels','tea','other'].forEach(cat => {
-      inventory[cat].forEach(item => {
-        if(item.name === itemName) {
-          item.qty -= qtyUsed;
-          if(item.qty < 0) item.qty = 0;
-        }
-      });
-    });
-    localStorage.setItem("inventory", JSON.stringify(inventory));
-  }
+// Update from invoice final page
+function updateInventoryFromInvoice() {
+  const rows = document.querySelectorAll('#invoiceView table tbody tr');
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    if(cells.length===5) {
+      const desc = cells[1].innerText;
+      const qty = parseInt(cells[3].innerText);
+      if(!isNaN(qty)) updateInventory(desc, qty);
+    }
+  });
+  localStorage.setItem("inventory", JSON.stringify(inventory));
+  alert("Inventory updated!");
+}
 
-  // ---------------- Misc ----------------
-  function lockPrefix(el, prefix) {
-    if (!el.value.startsWith(prefix)) el.value = prefix;
-  }
+// ---------------- Invoice App Logic ----------------
+let enteredId = '';
+let enteredStore = '';
+let enteredDate = '';
+const itemOptions = ['BFT-Large Bag', 'BFT-Small Bag', 'Other Product'];
+const descriptions = [
+  'Boreal Berry','Loon Song','Northern Lights','40° Below','Evergreen',
+  'Happy Camper','Canadian Shield','Cranberry Mint','Sleeping Giant',
+  'Stargazer','Licorice Spice','Holiday Tea','Pukaskwa','Kakabeka Falls'
+];
 
-  function reset() {
-    enteredId = '';
-    enteredStore = '';
-    enteredDate = '';
-    document.getElementById('invoiceId').value = '';
-    document.getElementById('storeName').value = '';
-    document.getElementById('invoiceDate').value = '';
-    document.getElementById('invoiceBody').innerHTML = '';
-    document.getElementById('invoiceView').innerHTML = '';
-    showPage('startPage');
-  }
+function goToTable() {
+  const idInput = document.getElementById('invoiceId');
+  const storeInput = document.getElementById('storeName');
+  const dateInput = document.getElementById('invoiceDate');
+  if(idInput.value.trim() === '' || storeInput.value.trim() === '') return alert('Enter valid Invoice ID and Store');
+  enteredId = idInput.value.trim();
+  enteredStore = storeInput.value.trim();
+  enteredDate = dateInput.value || new Date().toISOString().split('T')[0];
+  showPage('tablePage');
+  addRow();
+}
 
-  window.onload = () => {
-    document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
-  };
+function addRow() {
+  const tbody = document.getElementById('invoiceBody');
+  const row = document.createElement('tr');
+  const itemSelect = `<select onchange="updatePrice(this)">${itemOptions.map(o=>`<option>${o}</option>`).join('')}</select>`;
+  const descSelect = `<select>${descriptions.map(d=>`<option>${d}</option>`).join('')}</select>`;
+  row.innerHTML = `<td>${itemSelect}</td><td>${descSelect}</td><td class="unitPrice">14.00</td>
+    <td><input type="number" value="1" min="0" onchange="updateTotal(this)"></td>
+    <td class="total">14.00</td>`;
+  tbody.appendChild(row);
+}
+
+function updatePrice(sel) {
+  const row = sel.closest('tr');
+  let price = 14; if(sel.value==='BFT-Small Bag') price=8.5; else if(sel.value==='Other Product') price=30;
+  row.querySelector('.unitPrice').innerText=price.toFixed(2);
+  const qty = parseInt(row.querySelector('input').value)||0;
+  row.querySelector('.total').innerText=(qty*price).toFixed(2);
+}
+
+function updateTotal(inputEl){
+  const row=inputEl.closest('tr');
+  const price=parseFloat(row.querySelector('.unitPrice').innerText);
+  const qty=parseInt(inputEl.value);
+  if(qty===0) row.remove(); else row.querySelector('.total').innerText=(price*qty).toFixed(2);
+}
+
+function lockPrefix(el, prefix) {
+  if (!el.value.startsWith(prefix)) {
+    el.value = prefix;
+  }
+}
+
+// ---------------- Generate Invoice ----------------
+function generateInvoice() {
+  const rows = document.querySelectorAll('#invoiceBody tr');
+  let totalSum = 0;
+  let totalQuantity = 0;
+  let html = `
+  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div><img src="images/bftlogofull.png" alt="Logo" style="width: 200px;"></div>
+    <div style="text-align: right;">
+      <h3>INVOICE #: ${enteredId}</h3>
+      <b>DATE:</b> ${enteredDate}<br>
+      <b>PO:</b><input id="poField" style="border:1px solid #000;padding:4px;margin-top:5px;width:200px;">
+    </div>
+  </div>
+  <p><b>To:</b> ${enteredStore}</p>
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Description</th><th>Unit Price</th><th>Quantity</th><th>Amount</th></tr>
+    </thead><tbody>`;
+  rows.forEach(row=>{
+    const item = row.querySelector('select').value;
+    const desc = row.querySelectorAll('select')[1].value;
+    const price = parseFloat(row.querySelector('.unitPrice').innerText);
+    const qty = parseInt(row.querySelector('input').value);
+    const total = price*qty;
+    totalQuantity+=qty; totalSum+=total;
+    html+=`<tr><td>${item}</td><td>${desc}</td><td>$${price.toFixed(2)}</td><td>${qty}</td><td>$${total.toFixed(2)}</td></tr>`;
+  });
+  html+=`<tr><td colspan="3" style="text-align:right;"><b>Totals:</b></td><td><b>${totalQuantity}</b></td><td><b>$${totalSum.toFixed(2)}</b></td></tr></tbody></table>
+  <div style="margin-top:20px;"><textarea id="notesField" style="width:100%;height:100px;border:1px solid #000;padding:8px;font-family:'Times New Roman';font-size:16px;" oninput="lockPrefix(this,'Notes: ')">Notes: </textarea></div>
+  <p style="margin-top:10px;">Thank you!<br>Lee-Ann</p>
+  <p><b>Method of Payment (cash/cheque/e-transfer): ______________________</b><br>
+  <i>Please make cheques payable to Boreal Forest Teas.</i><br>E-transfer to kenogamissi@yahoo.com</p>
+  <p style="text-align:center;">
+    <a href="http://www.borealforestteas.ca">www.borealforestteas.ca</a><br>
+    426 Norah St. S. Thunder Bay | hello@borealforestteas@gmail.ca | 807-631-4422<br>
+    Ontario, Canada, P7E 1N9
+  </p>`;
+  document.getElementById('invoiceView').innerHTML=html;
+  showPage('invoicePage');
+}
+
+function reset() {
+  enteredId=''; enteredStore=''; enteredDate='';
+  document.getElementById('invoiceId').value='';
+  document.getElementById('storeName').value='';
+  document.getElementById('invoiceDate').value='';
+  document.getElementById('invoiceBody').innerHTML='';
+  document.getElementById('invoiceView').innerHTML='';
+  showPage('startPage');
+}
+
+window.onload=()=>{document.getElementById('invoiceDate').value=new Date().toISOString().split('T')[0];};
 </script>
 
 </body>
 </html>
+
