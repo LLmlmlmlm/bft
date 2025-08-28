@@ -98,15 +98,15 @@
     <input type="text" id="storeName" placeholder="e.g. Enter Here"><br>
     <label for="invoiceDate">Date:</label>
     <input type="date" id="invoiceDate"><br>
+    <button onclick="showPage('homePage')">Home Page</button>
     <button onclick="goToTable()">Go</button>
-    <button onclick="showPage('homePage')">Home</button>
   </div>
 </div>
 
 <!-- INVOICE TABLE PAGE -->
 <div id="tablePage" class="page">
   <h2>Invoice Table</h2>
-  <button onclick="showPage('homePage')">Home</button>
+  <button onclick="showPage('homePage')">Home Page</button>
   <button onclick="addRow()">Add Row</button>
   <button onclick="generateInvoice()">Done</button>
   <table id="invoiceTable">
@@ -126,7 +126,7 @@
 <!-- FINAL INVOICE VIEW PAGE -->
 <div id="invoicePage" class="page">
   <div style="text-align:right;margin-bottom:10px;">
-    <button onclick="showPage('homePage')">Home</button>
+    <button onclick="showPage('homePage')">Home Page</button>
     <button onclick="updateInventoryFromInvoice()">Update Inventory</button>
     <button onclick="reset()">Done</button>
   </div>
@@ -137,31 +137,31 @@
 <div id="inventoryPage" class="page">
   <h2>Inventory</h2>
   <div id="inventoryList"></div>
-  <button onclick="showPage('homePage')">Back</button>
+  <button onclick="showPage('homePage')">Home Page</button>
 </div>
 
 <script>
 // ---------------- Inventory Setup ----------------
 let inventory = JSON.parse(localStorage.getItem("inventory")) || {
   labels: [
-    {name: "Round Label", qty: 500},
-    {name: "Square Label", qty: 300}
+    {name: "Regular Label", qty: 20},
+    {name: "Sample Label", qty: 20}
   ],
   tea: [
-    {name: "Boreal Berry", qty: 100},
-    {name: "Loon Song", qty: 120},
-    {name: "Northern Lights", qty: 80},
-    {name: "40° Below", qty: 90},
-    {name: "Evergreen", qty: 100},
-    {name: "Happy Camper", qty: 70},
-    {name: "Canadian Shield", qty: 95},
-    {name: "Cranberry Mint", qty: 110},
-    {name: "Sleeping Giant", qty: 85},
-    {name: "Stargazer", qty: 100},
-    {name: "Licorice Spice", qty: 60},
-    {name: "Holiday Tea", qty: 50},
-    {name: "Pukaskwa", qty: 75},
-    {name: "Kakabeka Falls", qty: 65}
+    {name: "Boreal Berry", qty: 20},
+    {name: "Loon Song", qty: 20},
+    {name: "Northern Lights", qty: 20},
+    {name: "40° Below", qty: 20},
+    {name: "Evergreen", qty: 20},
+    {name: "Happy Camper", qty: 20},
+    {name: "Canadian Shield", qty: 20},
+    {name: "Cranberry Mint", qty: 20},
+    {name: "Sleeping Giant", qty: 20},
+    {name: "Stargazer", qty: 20},
+    {name: "Licorice Spice", qty: 20},
+    {name: "Holiday Tea", qty: 20},
+    {name: "Pukaskwa", qty: 20},
+    {name: "Kakabeka Falls", qty: 20}
   ]
 };
 
@@ -305,7 +305,7 @@ function generateInvoice() {
   <i>Please make cheques payable to Boreal Forest Teas.</i><br>E-transfer to kenogamissi@yahoo.com</p>
   <p style="text-align:center;">
     <a href="http://www.borealforestteas.ca">www.borealforestteas.ca</a><br>
-    426 Norah St. S. Thunder Bay | hello@borealforestteas@gmail.ca | 807-631-4422<br>
+    426 Norah St. S. Thunder Bay | hello@borealforestteas.ca | 807-631-4422<br>
     Ontario, Canada, P7E 1N9
   </p>`;
   document.getElementById('invoiceView').innerHTML=html;
