@@ -164,6 +164,74 @@
 //    {name: "Kakabeka Falls", qty: 20}
 //  ]
 //};
+/////////////////////////////////////////////////////////////////////////////////////////////
+  let inventory = JSON.parse(localStorage.getItem("inventory")) || {
+  prepared: [
+    {name: "Boreal Berry", qty: 20},
+    {name: "Loon Song", qty: 20},
+    {name: "Northern Lights", qty: 20},
+    {name: "40° Below", qty: 20},
+    {name: "Evergreen", qty: 20},
+    {name: "Happy Camper", qty: 20},
+    {name: "Canadian Shield", qty: 20},
+    {name: "Cranberry Mint", qty: 20},
+    {name: "Sleeping Giant", qty: 20},
+    {name: "Stargazer", qty: 20},
+    {name: "Licorice Spice", qty: 20},
+    {name: "Holiday Tea", qty: 20},
+    {name: "Pukaskwa", qty: 20},
+    {name: "Kakabeka Falls", qty: 20},
+    {name: "Sleeping Giant", qty: 20},
+    {name: "Pancake Bay", qty: 20}
+  ],
+  regularLabels: [
+    {name: "Regular - Boreal Berry", qty: 20},
+    {name: "Regular - Loon Song", qty: 20},
+    {name: "Regular - Northern Lights", qty: 20},
+    {name: "Regular - 40° Below", qty: 20},
+    {name: "Regular - Evergreen", qty: 20},
+    {name: "Regular - Happy Camper", qty: 20},
+    {name: "Regular - Canadian Shield", qty: 20},
+    {name: "Regular - Cranberry Mint", qty: 20},
+    {name: "Regular - Sleeping Giant", qty: 20},
+    {name: "Regular - Stargazer", qty: 20},
+    {name: "Regular - Licorice Spice", qty: 20},
+    {name: "Regular - Holiday Tea", qty: 20},
+    {name: "Regular - Pukaskwa", qty: 20},
+    {name: "Regular - Kakabeka Falls", qty: 20}
+    {name: "Regular - Sleeping Giant", qty: 20}
+    {name: "Regular - Pancake Bay", qty: 20}
+  ],
+    sampleLabels: [
+    {name: "Sample - Boreal Berry", qty: 20},
+    {name: "Sample - Loon Song", qty: 20},
+    {name: "Sample - Northern Lights", qty: 20},
+    {name: "Sample - 40° Below", qty: 20},
+    {name: "Sample - Evergreen", qty: 20},
+    {name: "Sample - Happy Camper", qty: 20},
+    {name: "Sample - Canadian Shield", qty: 20},
+    {name: "Sample - Cranberry Mint", qty: 20},
+    {name: "Sample - Sleeping Giant", qty: 20},
+    {name: "Sample - Stargazer", qty: 20},
+    {name: "Sample - Licorice Spice", qty: 20},
+    {name: "Sample - Holiday Tea", qty: 20},
+    {name: "Sample - Pukaskwa", qty: 20},
+    {name: "Sample - Kakabeka Falls", qty: 20},
+    {name: "Sample - Sleeping Giant", qty: 20},
+    {name: "Sample - Pancake Bay", qty: 20}
+  ],
+  herbs: [
+    {name: "Boreal Berry - Small Bag", qty: 20},
+    {name: "Boreal Berry - Large Bag", qty: 20},
+    {name: "Loon Song - Small Bag", qty: 20},
+    {name: "Loon Song - Large Bag", qty: 20},
+    // … (all teas here)
+  ],
+  other: [
+    {name: "Gift Box", qty: 10},
+    {name: "Mugs", qty: 15}
+  ]
+};
 
   let inventory = JSON.parse(localStorage.getItem("inventory")) || {
   labels: [
