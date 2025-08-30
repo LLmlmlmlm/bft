@@ -228,29 +228,66 @@ function showPage(id) {
   let listDiv = document.getElementById('inventoryList');
   let html = '';
   for (let category in inventory) {
-    html += `<h3>${category.charAt(0).toUpperCase() + category.slice(1)}</h3>`;
-    html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
-    inventory[category].forEach(i => {
-      html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
-    });
-    html += `</table>`;
+    html += `<h3>${category}</h3>`;
+
+    if (Array.isArray(inventory[category])) {
+      // Normal array
+      html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
+      inventory[category].forEach(i => {
+        html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+      });
+      html += `</table>`;
+    } else {
+      // Nested object (like Labels)
+      for (let sub in inventory[category]) {
+        html += `<h4>${sub}</h4>`;
+        html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
+        inventory[category][sub].forEach(i => {
+          html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+        });
+        html += `</table>`;
+      }
+    }
   }
   listDiv.innerHTML = html;
 }
 
 
 
+
 // ---------------- Update Inventory ----------------
 function updateInventory(itemName, qtyUsed) {
-  ['labels','tea'].forEach(cat => {
-    inventory[cat].forEach(item=>{
-      if(item.name === itemName) {
-        item.qty -= qtyUsed;
-        if(item.qty<0) item.qty=0;
+  // Prepared Tea
+  inventory["Prepared Tea"].forEach(item => {
+    if (item.name === itemName) {
+      item.qty = Math.max(0, item.qty - qtyUsed);
+    }
+  });
+
+  // Labels
+  for (let type in inventory.Labels) {
+    inventory.Labels[type].forEach(item => {
+      if (item.name === itemName) {
+        item.qty = Math.max(0, item.qty - qtyUsed);
       }
     });
+  }
+
+  // Herbs
+  inventory.Herbs.forEach(item => {
+    if (item.name === itemName) {
+      item.qty = Math.max(0, item.qty - qtyUsed);
+    }
+  });
+
+  // Other
+  inventory.Other.forEach(item => {
+    if (item.name === itemName) {
+      item.qty = Math.max(0, item.qty - qtyUsed);
+    }
   });
 }
+
 
 // Update from invoice final page
 function updateInventoryFromInvoice() {
