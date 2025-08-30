@@ -144,7 +144,7 @@
 // ---------------- Inventory Setup ----------------
 
   let inventory = JSON.parse(localStorage.getItem("inventory")) || {
-  prepared: [
+  "Prepared Tea": [
     {name: "Boreal Berry", qty: 20},
     {name: "Loon Song", qty: 20},
     {name: "Northern Lights", qty: 20},
@@ -162,7 +162,8 @@
     {name: "Sleeping Giant", qty: 20},
     {name: "Pancake Bay", qty: 20}
   ],
-  regularLabels: [
+  "Labels": {
+  Regular: [
     {name: "Regular - Boreal Berry", qty: 20},
     {name: "Regular - Loon Song", qty: 20},
     {name: "Regular - Northern Lights", qty: 20},
@@ -180,7 +181,7 @@
     {name: "Regular - Sleeping Giant", qty: 20},
     {name: "Regular - Pancake Bay", qty: 20}
   ],
-    sampleLabels: [
+  Sample: [
     {name: "Sample - Boreal Berry", qty: 20},
     {name: "Sample - Loon Song", qty: 20},
     {name: "Sample - Northern Lights", qty: 20},
@@ -197,14 +198,15 @@
     {name: "Sample - Kakabeka Falls", qty: 20},
     {name: "Sample - Sleeping Giant", qty: 20},
     {name: "Sample - Pancake Bay", qty: 20}
-  ],
-  herbs: [
+  ]
+  }
+  "Herbs": [
     {name: "Cranberry", qty: 20},
     {name: "Blueberry", qty: 20},
     {name: "etc.", qty: 20}
     // … (all teas here)
   ],
-  other: [
+  "Other": [
     {name: "Gift Box", qty: 10},
     {name: "Mugs", qty: 15}
   ]
@@ -278,7 +280,7 @@ const descriptions = [
 ];
 old*/
   
-/*new*/
+/*new
 const inventory = {
   "Prepared Tea": [
     "Boreal Berry", "Loon Song", "Northern Lights", "40° Below",
@@ -297,7 +299,7 @@ const inventory = {
     "Other Product"
   ]
 };
-/*new*/
+/*new*/*/
 
 
 function goToTable() {
@@ -316,24 +318,21 @@ function addRow() {
   const tbody = document.getElementById('invoiceBody');
   const row = document.createElement('tr');
 
-  //const itemSelect = `<select onchange="updatePrice(this)">${itemOptions.map(o=>`<option>${o}</option>`).join('')}</select>`;
-  //////
-const sectionSelect = `<select onchange="loadSection(this)">
-  ${Object.keys(inventory).map(sec=>`<option>${sec}</option>`).join('')}
-</select>`;
+  const sectionSelect = `<select onchange="loadSection(this)">
+    ${Object.keys(inventory).map(sec => `<option>${sec}</option>`).join('')}
+  </select>`;
 
-const itemSelect = `<select class="itemSelect"></select>`; // will be filled by loadSection
-/////////
-  const descSelect = `<select>${descriptions.map(d=>`<option>${d}</option>`).join('')}</select>`;
+  const itemSelect = `<select class="itemSelect" onchange="updatePrice(this)"></select>`;
 
-  // Default price for "Regular Bag"
   const defaultPrice = 14;
 
-  row.innerHTML = `<td>${itemSelect}</td><td>${descSelect}</td><td class="unitPrice">${defaultPrice.toFixed(2)}</td>
+  row.innerHTML = `<td>${sectionSelect}</td><td>${itemSelect}</td>
+    <td class="unitPrice">${defaultPrice.toFixed(2)}</td>
     <td><input type="number" value="1" min="0" onchange="updateTotal(this)"></td>
     <td class="total">${defaultPrice.toFixed(2)}</td>`;
   tbody.appendChild(row);
 }
+
 
 function loadSection(sel) {
   const section = sel.value;
