@@ -256,53 +256,46 @@ function showPage(id) {
 
 
 // ---------------- Update Inventory ----------------
+// ---------------- Update Inventory ----------------
 function updateInventory(itemName, qtyUsed) {
-  // Prepared Tea
-  inventory["Prepared Tea"].forEach(item => {
-    if (item.name === itemName) {
-      item.qty = Math.max(0, item.qty - qtyUsed);
-    }
-  });
+  // Helper to deduct from an array of objects
+  function deduct(arr) {
+    const item = arr.find(i => i.name === itemName);
+    if (item) item.qty = Math.max(0, item.qty - qtyUsed);
+  }
 
-  // Labels
+  // Prepared Tea
+  deduct(inventory["Prepared Tea"]);
+
+  // Labels (loop through all types, e.g., Regular, Sample)
   for (let type in inventory.Labels) {
-    inventory.Labels[type].forEach(item => {
-      if (item.name === itemName) {
-        item.qty = Math.max(0, item.qty - qtyUsed);
-      }
-    });
+    deduct(inventory.Labels[type]);
   }
 
   // Herbs
-  inventory.Herbs.forEach(item => {
-    if (item.name === itemName) {
-      item.qty = Math.max(0, item.qty - qtyUsed);
-    }
-  });
+  deduct(inventory.Herbs);
 
   // Other
-  inventory.Other.forEach(item => {
-    if (item.name === itemName) {
-      item.qty = Math.max(0, item.qty - qtyUsed);
-    }
-  });
+  deduct(inventory.Other);
 }
 
-
-// Update from invoice final page
+// Update inventory based on the final invoice table
 function updateInventoryFromInvoice() {
   const rows = document.querySelectorAll('#invoiceView table tbody tr');
   rows.forEach(row => {
     const cells = row.querySelectorAll('td');
-    if(cells.length===5) {
-      const desc = cells[1].innerText;
-      const qty = parseInt(cells[3].innerText);
-      if(!isNaN(qty)) updateInventory(desc, qty);
+    if (cells.length === 5) {
+      const desc = cells[1].innerText.trim(); // Description column
+      const qty = parseInt(cells[3].innerText); // Quantity column
+      if (!isNaN(qty)) updateInventory(desc, qty);
     }
   });
   localStorage.setItem("inventory", JSON.stringify(inventory));
   alert("Inventory updated!");
 }
+
+
+
 
 // ---------------- Invoice App Logic ----------------
 let enteredId = '';
@@ -377,15 +370,23 @@ function loadSection(sel) {
   const itemSel = row.querySelector('.itemSelect');
   
   let items = [];
+
   if (section === "Labels") {
-    items = ["-- Regular --", ...inventory.Labels.Regular, "-- Sample --", ...inventory.Labels.Sample];
+    // Flatten all labels into a single array of names
+    items = [];
+    for (let type in inventory.Labels) {
+      inventory.Labels[type].forEach(item => items.push(item.name));
+    }
   } else {
-    items = inventory[section];
+    // Other sections
+    inventory[section].forEach(item => items.push(item.name));
   }
 
   itemSel.innerHTML = items.map(i => `<option>${i}</option>`).join('');
   updatePrice(itemSel); // reset price
 }
+
+
 
   
 ///function updatePrice(sel) {
@@ -407,27 +408,38 @@ function loadSection(sel) {
   const value = sel.value;
   let price = 0;
 
-  // Prepared Tea
-  if (inventory["Prepared Tea"].includes(value)) {
-    price = 14; // all prepared teas
+  // Helper to check if a value exists in an array of objects by name
+  function contains(arr) {
+    return arr.find(item => item.name === value);
   }
 
-  // Labels
-  else if (inventory.Labels.Regular.includes(value)) {
+  // Prepared Tea
+  if (contains(inventory["Prepared Tea"])) {
     price = 14;
-  } else if (inventory.Labels.Sample.includes(value)) {
+  }
+  // Labels
+  else if (contains(inventory.Labels.Regular)) {
+    price = 14;
+  }
+  else if (contains(inventory.Labels.Sample)) {
     price = 8.5;
   }
-
   // Herbs
-  else if (inventory.Herbs.includes(value)) {
-    price = 20; // example, set your herb price
+  else if (contains(inventory.Herbs)) {
+    price = 20; // set herb price as needed
   }
-
   // Other
-  else if (inventory.Other.includes(value)) {
+  else if (contains(inventory.Other)) {
     price = 30;
   }
+
+  // Update DOM
+  row.querySelector('.unitPrice').innerText = price.toFixed(2);
+  const qty = parseInt(row.querySelector('input').value) || 0;
+  row.querySelector('.total').innerText = (qty * price).toFixed(2);
+}
+
+
 
   // Update DOM
   row.querySelector('.unitPrice').innerText = price.toFixed(2);
