@@ -269,12 +269,36 @@ function updateInventoryFromInvoice() {
 let enteredId = '';
 let enteredStore = '';
 let enteredDate = '';
+/*old
 const itemOptions = ['Regular Bag', 'Sample Bag', 'Other Product'];
 const descriptions = [
   'Boreal Berry','Loon Song','Northern Lights','40° Below','Evergreen',
   'Happy Camper','Canadian Shield','Cranberry Mint','Sleeping Giant',
   'Stargazer','Licorice Spice','Holiday Tea','Pukaskwa','Kakabeka Falls'
 ];
+old*/
+  
+/*new*/
+const inventory = {
+  "Prepared Tea": [
+    "Boreal Berry", "Loon Song", "Northern Lights", "40° Below",
+    "Evergreen", "Happy Camper", "Canadian Shield", "Cranberry Mint",
+    "Sleeping Giant", "Stargazer", "Licorice Spice", "Holiday Tea",
+    "Pukaskwa", "Kakabeka Falls"
+  ],
+  "Labels": {
+    Regular: ["Regular Bag"],
+    Sample: ["Sample Bag"]
+  },
+  "Herbs": [
+    // list your herb items here
+  ],
+  "Other": [
+    "Other Product"
+  ]
+};
+/*new*/
+
 
 function goToTable() {
   const idInput = document.getElementById('invoiceId');
@@ -292,7 +316,14 @@ function addRow() {
   const tbody = document.getElementById('invoiceBody');
   const row = document.createElement('tr');
 
-  const itemSelect = `<select onchange="updatePrice(this)">${itemOptions.map(o=>`<option>${o}</option>`).join('')}</select>`;
+  //const itemSelect = `<select onchange="updatePrice(this)">${itemOptions.map(o=>`<option>${o}</option>`).join('')}</select>`;
+  //////
+const sectionSelect = `<select onchange="loadSection(this)">
+  ${Object.keys(inventory).map(sec=>`<option>${sec}</option>`).join('')}
+</select>`;
+
+const itemSelect = `<select class="itemSelect"></select>`; // will be filled by loadSection
+/////////
   const descSelect = `<select>${descriptions.map(d=>`<option>${d}</option>`).join('')}</select>`;
 
   // Default price for "Regular Bag"
@@ -304,19 +335,71 @@ function addRow() {
   tbody.appendChild(row);
 }
 
-
-function updatePrice(sel) {
+function loadSection(sel) {
+  const section = sel.value;
   const row = sel.closest('tr');
-  let price = 14; // default
+  const itemSel = row.querySelector('.itemSelect');
+  
+  let items = [];
+  if (section === "Labels") {
+    items = ["-- Regular --", ...inventory.Labels.Regular, "-- Sample --", ...inventory.Labels.Sample];
+  } else {
+    items = inventory[section];
+  }
 
-  if (sel.value === 'Sample Bag') price = 8.5;
-  else if (sel.value === 'Other Product') price = 30;
+  itemSel.innerHTML = items.map(i => `<option>${i}</option>`).join('');
+  updatePrice(itemSel); // reset price
+}
 
+  
+///function updatePrice(sel) {
+///  const row = sel.closest('tr');
+///  let price = 14; // default
+
+///  if (sel.value === 'Sample Bag') price = 8.5;
+///  else if (sel.value === 'Other Product') price = 30;
+
+///  row.querySelector('.unitPrice').innerText = price.toFixed(2);
+///  const qty = parseInt(row.querySelector('input').value) || 0;
+///  row.querySelector('.total').innerText = (qty * price).toFixed(2);
+///}
+
+
+///
+  function updatePrice(sel) {
+  const row = sel.closest('tr');
+  const value = sel.value;
+  let price = 0;
+
+  // Prepared Tea
+  if (inventory["Prepared Tea"].includes(value)) {
+    price = 14; // all prepared teas
+  }
+
+  // Labels
+  else if (inventory.Labels.Regular.includes(value)) {
+    price = 14;
+  } else if (inventory.Labels.Sample.includes(value)) {
+    price = 8.5;
+  }
+
+  // Herbs
+  else if (inventory.Herbs.includes(value)) {
+    price = 20; // example, set your herb price
+  }
+
+  // Other
+  else if (inventory.Other.includes(value)) {
+    price = 30;
+  }
+
+  // Update DOM
   row.querySelector('.unitPrice').innerText = price.toFixed(2);
   const qty = parseInt(row.querySelector('input').value) || 0;
   row.querySelector('.total').innerText = (qty * price).toFixed(2);
 }
 
+///
 
 function updateTotal(inputEl){
   const row=inputEl.closest('tr');
@@ -330,6 +413,9 @@ function lockPrefix(el, prefix) {
     el.value = prefix;
   }
 }
+
+
+  
 
 // ---------------- Generate Invoice ----------------
 function generateInvoice() {
