@@ -79,23 +79,36 @@
 </head>
 <body>
 
+
+
+  
 <!-- HOME MENU -->
+//creates homepage
 <div id="homePage" class="page active">
   <img src="images/bftlogofull.png" alt="Logo">
   <div class="appOptions">
     <div class="appOption" onclick="showPage('startPage')">Invoice App</div>
-    <div class="appOption" onclick="showPage('inventoryPage')">Inventory App</div>
+    <!--<div class="appOption" onclick="showPage('inventoryPage')">Inventory App</div>-->
   </div>
 </div>
 
 <!-- INVOICE START PAGE -->
+  //
+  //
+  //
+  // Invoice ID is stored as "invoiceId" as text input
+  // Name of store is stored as "storeName" as text input
+  // Invoice date is stored as "invoiceDate" as date input
+  //
+  //
+  //
 <div id="startPage" class="page">
   <img src="images/bftlogofull.png" alt="Logo">
   <div style="text-align: center;">
     <label for="invoiceId">Enter Invoice ID:</label>
-    <input type="text" id="invoiceId" placeholder="e.g. BFT2025-01"><br>
+    <input type="text" id="invoiceId" placeholder="e.g. BFT2025-01"><br> ///
     <label for="storeName">Enter Store Name:</label>
-    <input type="text" id="storeName" placeholder="e.g. Enter Here"><br>
+    <input type="text" id="storeName" placeholder="e.g. Enter Here"><br> ///
     <label for="invoiceDate">Date:</label>
     <input type="date" id="invoiceDate"><br>
     <button onclick="showPage('homePage')">Home Page</button>
