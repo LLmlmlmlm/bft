@@ -142,9 +142,31 @@
 
 <script>
 // ---------------- Inventory Setup ----------------
-
+// let inventory = JSON.parse(localStorage.getItem("inventory")) || {
+//  labels: [
+//    {name: "Regular Label", qty: 20},
+//    {name: "Sample Label", qty: 20}
+//  ],
+//  tea: [
+//    {name: "Boreal Berry", qty: 20},
+//    {name: "Loon Song", qty: 20},
+//    {name: "Northern Lights", qty: 20},
+//    {name: "40° Below", qty: 20},
+//    {name: "Evergreen", qty: 20},
+//    {name: "Happy Camper", qty: 20},
+//    {name: "Canadian Shield", qty: 20},
+//    {name: "Cranberry Mint", qty: 20},
+//    {name: "Sleeping Giant", qty: 20},
+//    {name: "Stargazer", qty: 20},
+//    {name: "Licorice Spice", qty: 20},
+//    {name: "Holiday Tea", qty: 20},
+//    {name: "Pukaskwa", qty: 20},
+//    {name: "Kakabeka Falls", qty: 20}
+//  ]
+//};
+/////////////////////////////////////////////////////////////////////////////////////////////
   let inventory = JSON.parse(localStorage.getItem("inventory")) || {
-  "Prepared Tea": [
+  prepared: [
     {name: "Boreal Berry", qty: 20},
     {name: "Loon Song", qty: 20},
     {name: "Northern Lights", qty: 20},
@@ -162,8 +184,7 @@
     {name: "Sleeping Giant", qty: 20},
     {name: "Pancake Bay", qty: 20}
   ],
-  "Labels": {
-  Regular: [
+  regularLabels: [
     {name: "Regular - Boreal Berry", qty: 20},
     {name: "Regular - Loon Song", qty: 20},
     {name: "Regular - Northern Lights", qty: 20},
@@ -181,7 +202,7 @@
     {name: "Regular - Sleeping Giant", qty: 20},
     {name: "Regular - Pancake Bay", qty: 20}
   ],
-  Sample: [
+    sampleLabels: [
     {name: "Sample - Boreal Berry", qty: 20},
     {name: "Sample - Loon Song", qty: 20},
     {name: "Sample - Northern Lights", qty: 20},
@@ -198,21 +219,58 @@
     {name: "Sample - Kakabeka Falls", qty: 20},
     {name: "Sample - Sleeping Giant", qty: 20},
     {name: "Sample - Pancake Bay", qty: 20}
-  ]
-  },
-  "Herbs": [
-    {name: "Cranberry", qty: 20},
-    {name: "Blueberry", qty: 20},
-    {name: "etc.", qty: 20}
+  ],
+  herbs: [
+    {name: "Boreal Berry - Small Bag", qty: 20},
+    {name: "Boreal Berry - Large Bag", qty: 20},
+    {name: "Loon Song - Small Bag", qty: 20},
+    {name: "Loon Song - Large Bag", qty: 20},
     // … (all teas here)
   ],
-  "Other": [
+  other: [
     {name: "Gift Box", qty: 10},
     {name: "Mugs", qty: 15}
   ]
 };
 /*
-
+  let inventory = JSON.parse(localStorage.getItem("inventory")) || {
+  labels: [
+    {name: "Regular Label - Small", qty: 20},
+    {name: "Regular Label - Large", qty: 20},
+    {name: "Sample Label - Small", qty: 20},
+    {name: "Sample Label - Large", qty: 20}
+  ],
+  tea: [
+    {name: "Boreal Berry - Small Bag", qty: 20},
+    {name: "Boreal Berry - Large Bag", qty: 20},
+    {name: "Loon Song - Small Bag", qty: 20},
+    {name: "Loon Song - Large Bag", qty: 20},
+    {name: "Northern Lights - Small Bag", qty: 20},
+    {name: "Northern Lights - Large Bag", qty: 20},
+    {name: "40° Below - Small Bag", qty: 20},
+    {name: "40° Below - Large Bag", qty: 20},
+    {name: "Evergreen - Small Bag", qty: 20},
+    {name: "Evergreen - Large Bag", qty: 20},
+    {name: "Happy Camper - Small Bag", qty: 20},
+    {name: "Happy Camper - Large Bag", qty: 20},
+    {name: "Canadian Shield - Small Bag", qty: 20},
+    {name: "Canadian Shield - Large Bag", qty: 20},
+    {name: "Cranberry Mint - Small Bag", qty: 20},
+    {name: "Cranberry Mint - Large Bag", qty: 20},
+    {name: "Sleeping Giant - Small Bag", qty: 20},
+    {name: "Sleeping Giant - Large Bag", qty: 20},
+    {name: "Stargazer - Small Bag", qty: 20},
+    {name: "Stargazer - Large Bag", qty: 20},
+    {name: "Licorice Spice - Small Bag", qty: 20},
+    {name: "Licorice Spice - Large Bag", qty: 20},
+    {name: "Holiday Tea - Small Bag", qty: 20},
+    {name: "Holiday Tea - Large Bag", qty: 20},
+    {name: "Pukaskwa - Small Bag", qty: 20},
+    {name: "Pukaskwa - Large Bag", qty: 20},
+    {name: "Kakabeka Falls - Small Bag", qty: 20},
+    {name: "Kakabeka Falls - Large Bag", qty: 20}
+  ]
+};
 
 */
 // ---------------- Page Navigation ----------------
@@ -223,114 +281,74 @@ function showPage(id) {
 }
 
 // ---------------- Show Inventory ----------------
+//  function renderInventory() {
+//  let listDiv = document.getElementById('inventoryList');
+//  let html = `<h3>Tea Blends</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
+//  inventory.tea.forEach(i=> {
+//    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+//  });
+//  html += `</table>`;
+//  html += `<h3>Labels</h3><table><tr><th>Item</th><th>Quantity</th></tr>`;
+//  inventory.labels.forEach(i=> {
+//    html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+//  });
+//  html += `</table>`;
+//  listDiv.innerHTML = html;
+//}
 
   function renderInventory() {
   let listDiv = document.getElementById('inventoryList');
   let html = '';
   for (let category in inventory) {
-    html += `<h3>${category}</h3>`;
-
-    if (Array.isArray(inventory[category])) {
-      // Normal array
-      html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
-      inventory[category].forEach(i => {
-        html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
-      });
-      html += `</table>`;
-    } else {
-      // Nested object (like Labels)
-      for (let sub in inventory[category]) {
-        html += `<h4>${sub}</h4>`;
-        html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
-        inventory[category][sub].forEach(i => {
-          html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
-        });
-        html += `</table>`;
-      }
-    }
+    html += `<h3>${category.charAt(0).toUpperCase() + category.slice(1)}</h3>`;
+    html += `<table><tr><th>Item</th><th>Quantity</th></tr>`;
+    inventory[category].forEach(i => {
+      html += `<tr><td>${i.name}</td><td>${i.qty}</td></tr>`;
+    });
+    html += `</table>`;
   }
   listDiv.innerHTML = html;
 }
 
 
 
-
-// ---------------- Update Inventory ----------------
 // ---------------- Update Inventory ----------------
 function updateInventory(itemName, qtyUsed) {
-  // Helper to deduct from an array of objects
-  function deduct(arr) {
-    const item = arr.find(i => i.name === itemName);
-    if (item) item.qty = Math.max(0, item.qty - qtyUsed);
-  }
-
-  // Prepared Tea
-  deduct(inventory["Prepared Tea"]);
-
-  // Labels (loop through all types, e.g., Regular, Sample)
-  for (let type in inventory.Labels) {
-    deduct(inventory.Labels[type]);
-  }
-
-  // Herbs
-  deduct(inventory.Herbs);
-
-  // Other
-  deduct(inventory.Other);
+  ['labels','tea'].forEach(cat => {
+    inventory[cat].forEach(item=>{
+      if(item.name === itemName) {
+        item.qty -= qtyUsed;
+        if(item.qty<0) item.qty=0;
+      }
+    });
+  });
 }
 
-// Update inventory based on the final invoice table
+// Update from invoice final page
 function updateInventoryFromInvoice() {
   const rows = document.querySelectorAll('#invoiceView table tbody tr');
   rows.forEach(row => {
     const cells = row.querySelectorAll('td');
-    if (cells.length === 5) {
-      const desc = cells[1].innerText.trim(); // Description column
-      const qty = parseInt(cells[3].innerText); // Quantity column
-      if (!isNaN(qty)) updateInventory(desc, qty);
+    if(cells.length===5) {
+      const desc = cells[1].innerText;
+      const qty = parseInt(cells[3].innerText);
+      if(!isNaN(qty)) updateInventory(desc, qty);
     }
   });
   localStorage.setItem("inventory", JSON.stringify(inventory));
   alert("Inventory updated!");
 }
 
-
-
-
 // ---------------- Invoice App Logic ----------------
 let enteredId = '';
 let enteredStore = '';
 let enteredDate = '';
-/*old
 const itemOptions = ['Regular Bag', 'Sample Bag', 'Other Product'];
 const descriptions = [
   'Boreal Berry','Loon Song','Northern Lights','40° Below','Evergreen',
   'Happy Camper','Canadian Shield','Cranberry Mint','Sleeping Giant',
   'Stargazer','Licorice Spice','Holiday Tea','Pukaskwa','Kakabeka Falls'
 ];
-old*/
-  
-/*new
-const inventory = {
-  "Prepared Tea": [
-    "Boreal Berry", "Loon Song", "Northern Lights", "40° Below",
-    "Evergreen", "Happy Camper", "Canadian Shield", "Cranberry Mint",
-    "Sleeping Giant", "Stargazer", "Licorice Spice", "Holiday Tea",
-    "Pukaskwa", "Kakabeka Falls"
-  ],
-  "Labels": {
-    Regular: ["Regular Bag"],
-    Sample: ["Sample Bag"]
-  },
-  "Herbs": [
-    // list your herb items here
-  ],
-  "Other": [
-    "Other Product"
-  ]
-};
-/*new*/*/
-
 
 function goToTable() {
   const idInput = document.getElementById('invoiceId');
@@ -347,107 +365,21 @@ function goToTable() {
 function addRow() {
   const tbody = document.getElementById('invoiceBody');
   const row = document.createElement('tr');
-
-  const sectionSelect = `<select onchange="loadSection(this)">
-    ${Object.keys(inventory).map(sec => `<option>${sec}</option>`).join('')}
-  </select>`;
-
-  const itemSelect = `<select class="itemSelect" onchange="updatePrice(this)"></select>`;
-
-  const defaultPrice = 14;
-
-  row.innerHTML = `<td>${sectionSelect}</td><td>${itemSelect}</td>
-    <td class="unitPrice">${defaultPrice.toFixed(2)}</td>
+  const itemSelect = `<select onchange="updatePrice(this)">${itemOptions.map(o=>`<option>${o}</option>`).join('')}</select>`;
+  const descSelect = `<select>${descriptions.map(d=>`<option>${d}</option>`).join('')}</select>`;
+  row.innerHTML = `<td>${itemSelect}</td><td>${descSelect}</td><td class="unitPrice">14.00</td>
     <td><input type="number" value="1" min="0" onchange="updateTotal(this)"></td>
-    <td class="total">${defaultPrice.toFixed(2)}</td>`;
+    <td class="total">14.00</td>`;
   tbody.appendChild(row);
 }
 
-
-function loadSection(sel) {
-  const section = sel.value;
+function updatePrice(sel) {
   const row = sel.closest('tr');
-  const itemSel = row.querySelector('.itemSelect');
-  
-  let items = [];
-
-  if (section === "Labels") {
-    // Flatten all labels into a single array of names
-    items = [];
-    for (let type in inventory.Labels) {
-      inventory.Labels[type].forEach(item => items.push(item.name));
-    }
-  } else {
-    // Other sections
-    inventory[section].forEach(item => items.push(item.name));
-  }
-
-  itemSel.innerHTML = items.map(i => `<option>${i}</option>`).join('');
-  updatePrice(itemSel); // reset price
+  let price = 14; if(sel.value==='BFT-Small Bag') price=8.5; else if(sel.value==='Other Product') price=30;
+  row.querySelector('.unitPrice').innerText=price.toFixed(2);
+  const qty = parseInt(row.querySelector('input').value)||0;
+  row.querySelector('.total').innerText=(qty*price).toFixed(2);
 }
-
-
-
-  
-///function updatePrice(sel) {
-///  const row = sel.closest('tr');
-///  let price = 14; // default
-
-///  if (sel.value === 'Sample Bag') price = 8.5;
-///  else if (sel.value === 'Other Product') price = 30;
-
-///  row.querySelector('.unitPrice').innerText = price.toFixed(2);
-///  const qty = parseInt(row.querySelector('input').value) || 0;
-///  row.querySelector('.total').innerText = (qty * price).toFixed(2);
-///}
-
-
-///
-  function updatePrice(sel) {
-  const row = sel.closest('tr');
-  const value = sel.value;
-  let price = 0;
-
-  // Helper to check if a value exists in an array of objects by name
-  function contains(arr) {
-    return arr.find(item => item.name === value);
-  }
-
-  // Prepared Tea
-  if (contains(inventory["Prepared Tea"])) {
-    price = 14;
-  }
-  // Labels
-  else if (contains(inventory.Labels.Regular)) {
-    price = 14;
-  }
-  else if (contains(inventory.Labels.Sample)) {
-    price = 8.5;
-  }
-  // Herbs
-  else if (contains(inventory.Herbs)) {
-    price = 20; // set herb price as needed
-  }
-  // Other
-  else if (contains(inventory.Other)) {
-    price = 30;
-  }
-
-  // Update DOM
-  row.querySelector('.unitPrice').innerText = price.toFixed(2);
-  const qty = parseInt(row.querySelector('input').value) || 0;
-  row.querySelector('.total').innerText = (qty * price).toFixed(2);
-}
-
-
-
-  // Update DOM
-  row.querySelector('.unitPrice').innerText = price.toFixed(2);
-  const qty = parseInt(row.querySelector('input').value) || 0;
-  row.querySelector('.total').innerText = (qty * price).toFixed(2);
-
-
-///
 
 function updateTotal(inputEl){
   const row=inputEl.closest('tr');
@@ -461,9 +393,6 @@ function lockPrefix(el, prefix) {
     el.value = prefix;
   }
 }
-
-
-  
 
 // ---------------- Generate Invoice ----------------
 function generateInvoice() {
@@ -519,6 +448,9 @@ function reset() {
 
 window.onload=()=>{document.getElementById('invoiceDate').value=new Date().toISOString().split('T')[0];};
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
